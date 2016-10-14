@@ -1,0 +1,23 @@
+{
+	"name": "Textbook",
+	"version": "0.1",
+	"author": ["Nessun Kim"],
+	"url": "https://github.com/DGIST-WIKI/Textbook",
+	"descriptionmsg": "textbook-desc",
+	"license-name": "MIT",
+	"type": "parserhook",
+	"MessagesDirs": {
+		"Textbook": [
+			"i18n"
+		]
+	},
+	"Hooks": {
+                "ParserFirstCallInit": [
+			"Textbook::onParserSetup"
+                ]
+        },
+	"AutoloadClasses": {
+		"Textbook": "Textbook_body.php"
+	},
+	"manifest_version": 1
+}

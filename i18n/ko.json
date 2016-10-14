@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nessun Kim"
+		]
+	},
+	"textbook-desc": "<textbook /> 태그를 이용해 전자교재 정보를 등록합니다."
+}
