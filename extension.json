@@ -11,11 +11,17 @@
 			"i18n"
 		]
 	},
+	"ExtensionMessagesFiles": {
+		"TextbookMagic": "Textbook.i18n.magic.php"
+	},
 	"Hooks": {
-                "ParserFirstCallInit": [
+    "ParserFirstCallInit": [
 			"Textbook::onParserSetup"
-                ]
-        },
+    ],
+		"LoadExtensionSchemaUpdates": [
+			"Textbook::addTables"
+		]
+  },
 	"AutoloadClasses": {
 		"Textbook": "Textbook_body.php"
 	},

@@ -1,2 +1,2 @@
 # Textbook
-Mediawiki extension for &lt;textbook /> tags.
+Mediawiki extension.
