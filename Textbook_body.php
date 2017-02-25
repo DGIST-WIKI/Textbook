@@ -23,10 +23,27 @@ class Textbook {
       $displayTitle = $parseroutput->getDisplayTitle();
       $dbw->update(
         'textbook_section',
-        array( 'txbsec_section_info' => json_encode($result) ),
+        array( 'txbsec_section_info' => json_encode( $parseroutput->getSections() ) ),
         array( 'txbsec_title' => $displayTitle )
       );
       return true;
+    }
+
+    public static function onParserAfterTidy( Parser &$parser, &$text ) {
+      if ($parser->textbookList) {
+        $id = $parser->getTitle()->getArticleId();
+        $dbw = wfGetDB( DB_MASTER );
+        $list = join(',', array_map(function ($item) use ($dbw) {
+          return $dbw->addQuotes($item);
+        }, $parser->textbookList));
+        $dbw->delete(
+          'textbook_section',
+          array(
+            'txbsec_page' => $id,
+            'txbsec_title NOT IN (' . $list . ')'
+          )
+        );
+      }
     }
 
     /**
@@ -34,20 +51,23 @@ class Textbook {
      * @param Parser $parser
      * @return string
      */
-    public static function textbookHook( Parser $parser, $title = '' ) {
+    public static function textbookHook( Parser &$parser, $title = '' ) {
 	    $hookOptions = Textbook::extractOptions( array_slice(func_get_args(), 2) );
       $id = $parser->getTitle()->getArticleId();
       $dbw = wfGetDB( DB_MASTER );
-      $dbw->delete( 'textbook', array( 'txb_page' => $id ) );
-      $dbw->insert(
+      $parser->textbookList = array();
+      $dbw->upsert(
         'textbook',
         array(
           'txb_page' => $id,
           'txb_title' => $title,
           'txb_author' => $hookOptions['author']
         ),
-        __METHOD__,
-        array()
+        array( 'txb_page' ),
+        array(
+          'txb_title' => $title,
+          'txb_author' => $hookOptions['author']
+        )
       );
       return;
     }
@@ -68,24 +88,38 @@ class Textbook {
         __METHOD__,
         array()
       );
-      $dbw->insert(
-        'textbook_section',
-        array(
-          'txbsec_page' => $id,
-          'txbsec_textbook' => ($textbookInfo -> txb_id),
-          'txbsec_title' => $title,
-          'txbsec_number' => $hookOptions['no']
-        ),
-        __METHOD__,
-        array()
-      );
-      return;
+      if ($textbookInfo) {
+        $parser->textbookList[] = $title;
+        $dbw->upsert(
+          'textbook_section',
+          array(
+            'txbsec_page' => $id,
+            'txbsec_textbook' => ($textbookInfo->txb_id),
+            'txbsec_title' => $title,
+            'txbsec_number' => $hookOptions['no']
+          ),
+          array( 'txbsec_title' ),
+          array(
+            'txbsec_page' => $id,
+            'txbsec_textbook' => ($textbookInfo->txb_id),
+            'txbsec_number' => $hookOptions['no']
+          )
+        );
+        return '*[[' . $title . ']]';
+      } else {
+        return "Error\n\n";
+      }
     }
+
+
     function addTables( DatabaseUpdater $updater ) {
       $updater->addExtensionTable( 'textbook', __DIR__ . '/table_textbook.sql' );
       $updater->addExtensionTable( 'textbook_section', __DIR__ . '/table_textbook_section.sql' );
       return true;
     }
+
+
+
     /**
      * Converts an array of values in form [0] => "name=value" into a real
      * associative array in form [name] => value. If no = is provided,

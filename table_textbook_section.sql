@@ -20,6 +20,6 @@ CREATE TABLE textbook_section(
 )/*$wgDBTableOptions*/;
 
 CREATE INDEX txbsec_page ON textbook_section (txbsec_page);
-CREATE INDEX txbsec_title ON textbook_section (txbsec_title);
+CREATE UNIQUE INDEX txbsec_title ON textbook_section (txbsec_title);
 
 COMMIT;

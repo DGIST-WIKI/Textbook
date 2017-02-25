@@ -23,6 +23,9 @@
 		],
 		"OutputPageParserOutput": [
 			"Textbook::onOutputPageParserOutput"
+		],
+		"ParserAfterTidy": [
+			"Textbook::onParserAfterTidy"
 		]
   },
 	"AutoloadClasses": {
