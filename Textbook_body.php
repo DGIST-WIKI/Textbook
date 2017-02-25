@@ -30,7 +30,7 @@ class Textbook {
     }
 
     public static function onParserAfterTidy( Parser &$parser, &$text ) {
-      if ($parser->textbookList) {
+      if (property_exists($parser, 'textbookList')) {
         $id = $parser->getTitle()->getArticleId();
         $dbw = wfGetDB( DB_MASTER );
         $list = join(',', array_map(function ($item) use ($dbw) {
