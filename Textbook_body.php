@@ -13,6 +13,7 @@ class Textbook {
     }
 
     /**
+     * save section object.
      * @param OutputPage &$out
      * @param ParserOutput $parseroutput
      * @return bool true
