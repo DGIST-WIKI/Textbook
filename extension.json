@@ -20,6 +20,9 @@
     ],
 		"LoadExtensionSchemaUpdates": [
 			"Textbook::addTables"
+		],
+		"OutputPageParserOutput": [
+			"Textbook::onOutputPageParserOutput"
 		]
   },
 	"AutoloadClasses": {

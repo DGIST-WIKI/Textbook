@@ -9,6 +9,8 @@ CREATE TABLE textbook_section(
   txbsec_number INT(11) NOT NULL,
   -- id of page
   txbsec_page INT(11) NOT NULL,
+  -- section object (JSON)
+  txbsec_section_info mediumblob,
   -- id of textbook
   txbsec_textbook INT UNSIGNED NOT NULL,
   INDEX txbsec_textbook (txbsec_textbook),

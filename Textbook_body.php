@@ -13,6 +13,21 @@ class Textbook {
     }
 
     /**
+     * @param Parser $parser
+     * @return bool true
+     */
+    public static function onOutputPageParserOutput( OutputPage &$out, ParserOutput $parseroutput ) {
+      $dbw = wfGetDB( DB_MASTER );
+      $displayTitle = $parseroutput->getDisplayTitle();
+      $dbw->update(
+        'textbook_section',
+        array( 'txbsec_section_info' => json_encode($result) ),
+        array( 'txbsec_title' => $displayTitle )
+      );
+      return true;
+    }
+
+    /**
      * {{#textbook}}
      * @param Parser $parser
      * @return string
@@ -35,6 +50,11 @@ class Textbook {
       return;
     }
 
+    /**
+     * {{#textbook_section}}
+     * @param Parser $parser
+     * @return string
+     */
     public static function textbookSectionHook( Parser $parser, $title = '' ) {
       $hookOptions = Textbook::extractOptions( array_slice(func_get_args(), 2) );
       $dbw = wfGetDB( DB_MASTER );
@@ -57,7 +77,7 @@ class Textbook {
         __METHOD__,
         array()
       );
-      return '*[['.$title.']]';
+      return;
     }
     function addTables( DatabaseUpdater $updater ) {
       $updater->addExtensionTable( 'textbook', __DIR__ . '/table_textbook.sql' );
